@@ -1,3 +1,5 @@
+%% CS 736 : Assignment 2: Question 3: (Denoising a Magnetic Resonance Image of the Brain)
+%% Part A
 % Loading the images
 load('../Data/assignmentImageDenoisingBrainNoisy.mat');
 
@@ -115,13 +117,11 @@ end
 
     % part A
     % The initial RRMSE
+    disp('Noise Level');
     disp(std_dev);
-
-    % part B
-
     
     
-% part C
+%% part B
 
 figure; imshow(abs(imageNoisy)); title ('Noisy Image');
 X(:,:) = denoisedImages(1,:,:); 
@@ -131,7 +131,7 @@ figure; imshow(abs(X));         title ('Huber function Image');
 X(:,:) = denoisedImages(3,:,:); 
 figure; imshow(abs(X));         title ('Discontinuous Adaptive Image');
 
-%part D
+%% part C
 for prior = 1:3
     figure;
     plot(fxValues(prior, 1:iterValues(prior)));
