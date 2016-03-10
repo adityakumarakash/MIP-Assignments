@@ -1,3 +1,6 @@
+%% CS 736
+%% Part A
+
 % Loading the images
 load('../Data/assignmentImageDenoisingPhantom.mat');
 
@@ -66,7 +69,7 @@ for prior = 1:3
             prevX = imageNoisy;       % holds previous solution
             
             tau = 0.1;
-            prevFx = 0 + alpha * priorPotential(X, imageNoisy, g);
+            prevFx = alpha * priorPotential(X, imageNoisy, g);
             iteration = 1;  
             if index == 1
                 fxValues(prior, iteration) = prevFx;
@@ -147,8 +150,7 @@ end
     % The initial RRMSE
     disp(RRMSE(imageNoiseless, imageNoisy));
 
-
-    % part B
+%% part B
 
     for prior = 1:3
         if prior == 1
@@ -170,18 +172,18 @@ end
         end
 end
     
-% part C
+%% part C
 
 figure; imshow(imageNoiseless); title ('NoiseLess Image');
-figure; imshow(abs(imageNoisy));     title ('Noisy Image');
-X(:,:) = denoisedImages(1,:,:); title ('Quadratic Function Image');
+figure; imshow(abs(imageNoisy));     
+X(:,:) = denoisedImages(1,:,:); title ('Noisy Image');
 figure; imshow(abs(X));
-X(:,:) = denoisedImages(2,:,:); title ('Huber function Image');
+X(:,:) = denoisedImages(2,:,:);title ('Quadratic Function Image');
 figure; imshow(abs(X));
-X(:,:) = denoisedImages(3,:,:); title ('Discontinuous Adaptive Image');
-figure; imshow(abs(X));
+X(:,:) = denoisedImages(3,:,:);  title ('Huber function Image');
+figure; imshow(abs(X));title ('Discontinuous Adaptive Image');
 
-%part D
+%% part D
 for prior = 1:3
     figure;
     plot(fxValues(prior, 1:iterValues(prior)));

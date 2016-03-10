@@ -1,0 +1,482 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>CS 736| A2</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-03-10"><meta name="DC.source" content="main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"> 
+  <center><h1>CS 736: Assignment 2: Question 2: (Denoising a Phantom Magnetic Resonance Image)<br><br>
+  Praveen Agrawal 12D020030 <br>
+  Aditya Kumar Akash 120050046</h1></center>
+  <!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Part A</a></li><li><a href="#2">Part B</a></li><li><a href="#3">Part C</a></li><li><a href="#4">Part D</a></li></ul></div><h2>Part A<a name="1"></a></h2><pre class="codeinput"><span class="comment">% Loading the images</span>
+load(<span class="string">'../Data/assignmentImageDenoisingPhantom.mat'</span>);
+
+<span class="comment">%imageNoiseless  = imageNoiseless(100:150, 100:150);</span>
+<span class="comment">%imageNoisy = imageNoisy(100:150, 100:150);</span>
+
+<span class="comment">% parameters</span>
+alpha = 0.08;
+gamma = 0.01;
+epsilonThreshold = 0.01;
+epsilon = 0.000001;
+gradThreshold = 0.0001;
+
+<span class="comment">% minVal = Inf;</span>
+<span class="comment">% minAlpha = 0;</span>
+<span class="comment">% minGamma = 0;</span>
+
+fxValues = zeros(3, 100, 1);
+iterValues = zeros(3, 1);
+denoisedImages = zeros(3, size(imageNoisy, 1), size(imageNoisy, 2));
+mult = [1,1; 1.2,1; 0.8, 1; 1,1.2; 1,0.8];
+rrmseValues = zeros(3, 5, 1);
+
+<span class="keyword">for</span> prior = 1:3
+
+   <span class="comment">% selecting the optimal parameters</span>
+   <span class="keyword">if</span> prior == 1
+       alpha = 0.20;
+       gamma = 0;      <span class="comment">% not relevant</span>
+   <span class="keyword">elseif</span> prior == 2
+       alpha = 0.60;
+       gamma = 0.15;
+   <span class="keyword">else</span>
+       alpha = 0.83;
+       gamma = 0.04;
+   <span class="keyword">end</span>
+
+<span class="comment">%   for alpha = linspace(0.58,0.63,6)</span>
+<span class="comment">%       for gamma = linspace(0.14, 0.19, 6)</span>
+<span class="comment">%           prior = 2;</span>
+
+    <span class="comment">% find the derivative w.r.t prior and the penalty w.r.t potential</span>
+    <span class="keyword">if</span> prior == 1
+        <span class="comment">% quadratic prior</span>
+        h = @(x) quadFunctionH(x);
+        g = @(x) quadFunctionG(x);
+
+    <span class="keyword">elseif</span> prior == 2
+        <span class="comment">% discontinuous adaptive huber prior</span>
+        h = @(x) huberFunctionH(x, gamma);
+        g = @(x) huberFunctionG(x, gamma);
+
+    <span class="keyword">else</span>
+        <span class="comment">% discontinuoue adaptive proir</span>
+        h = @(x) discontAdapFunctionH(x, gamma);
+        g = @(x) discontAdapFunctionG(x, gamma);
+    <span class="keyword">end</span>
+
+    <span class="keyword">for</span> index = 1:5
+
+            alpha = alpha * mult(index, 1);
+            gamma = gamma * mult(index, 2);
+
+            <span class="comment">% Gradient Descent to optimize the values</span>
+            X = imageNoisy;           <span class="comment">% initial guess</span>
+            prevX = imageNoisy;       <span class="comment">% holds previous solution</span>
+
+            tau = 0.1;
+            prevFx = alpha * priorPotential(X, imageNoisy, g);
+            iteration = 1;
+            <span class="keyword">if</span> index == 1
+                fxValues(prior, iteration) = prevFx;
+            <span class="keyword">end</span>
+
+            <span class="keyword">while</span> tau &gt; epsilon &amp;&amp; iteration &lt; 50
+                <span class="comment">% main loop</span>
+
+                <span class="comment">% calculating the likelihood part of X</span>
+                likelihoodX = prevX - imageNoisy;
+
+                priorDerivative = priorGradient(X, imageNoisy, h);
+
+                dX = (1-alpha) * 2 * likelihoodX + alpha * priorDerivative;
+
+                <span class="keyword">if</span> sum(sum(abs(dX))) &lt; gradThreshold
+                    <span class="keyword">break</span>
+                <span class="keyword">end</span>
+
+                X = prevX - tau * dX;
+                priorV = priorPotential(X, imageNoisy, g);
+                likelihoodX = X - imageNoisy;
+                fx = alpha * priorV + (1-alpha) * sum(sum(abs(likelihoodX).^2));
+
+                <span class="comment">% selecting required value of tau</span>
+                <span class="keyword">while</span>  fx &gt; prevFx &amp;&amp; tau &gt; epsilon
+                    X = prevX - tau * dX;
+                    priorV = priorPotential(X, imageNoisy, g);
+                    likelihoodX = X - imageNoisy;
+                    fx = alpha * priorV + (1-alpha) * sum(sum(abs(likelihoodX).^2));
+                    tau = tau * 0.5;
+                <span class="keyword">end</span>
+
+                <span class="keyword">if</span> fx &lt;= prevFx
+                    prevX = X;
+                    prevFx = fx;
+                    iteration = iteration + 1;
+                    <span class="keyword">if</span> index == 1
+                        fxValues(prior, iteration) = fx;
+                    <span class="keyword">end</span>
+                    tau = tau * 1.1;
+                <span class="keyword">end</span>
+
+            <span class="keyword">end</span>
+
+            X = prevX;
+            <span class="keyword">if</span> index == 1
+                iterValues(prior) = iteration;
+                denoisedImages(prior,:,:) = X;
+            <span class="keyword">end</span>
+            rrmseValues(prior, index) = RRMSE(imageNoiseless, X);
+
+    <span class="comment">%         sprintf('%f %f %f\n', RRMSE(imageNoiseless, X), alpha, gamma)</span>
+    <span class="comment">%         if RRMSE(imageNoiseless, X) &lt; minVal</span>
+    <span class="comment">%             minVal = RRMSE(imageNoiseless, X);</span>
+    <span class="comment">%             minAlpha = alpha;</span>
+    <span class="comment">%             minGamma = gamma;</span>
+    <span class="comment">%         end</span>
+
+        <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+    <span class="comment">%</span>
+    <span class="comment">% minVal</span>
+    <span class="comment">% minAlpha</span>
+    <span class="comment">% minGamma</span>
+
+
+    <span class="comment">% gradient descent done</span>
+    <span class="comment">% show the optimized values</span>
+    <span class="comment">% disp(RRMSE(imageNoiseless, X));</span>
+    <span class="comment">% imshow(imageNoiseless);</span>
+    <span class="comment">% figure; imshow(imageNoisy);</span>
+    <span class="comment">% figure; imshow(X);</span>
+
+
+    <span class="comment">% part A</span>
+    <span class="comment">% The initial RRMSE</span>
+    disp(RRMSE(imageNoiseless, imageNoisy));
+</pre><pre class="codeoutput">    0.2986
+
+</pre><h2>part B<a name="2"></a></h2><pre class="codeinput">    <span class="keyword">for</span> prior = 1:3
+        <span class="keyword">if</span> prior == 1
+            fprintf(<span class="string">'For quadratic prior, alpha* = 0.2\n'</span>);
+        <span class="keyword">elseif</span> prior == 2
+            fprintf(<span class="string">'For Discontinuity-adaptive Huber function, alpha* = 0.60, gamma*= 0.15\n'</span>);
+        <span class="keyword">else</span>
+            fprintf(<span class="string">'For Discontinuity-adaptive function, alpha* = 0.83, gamma*= 0.04\n'</span>);
+        <span class="keyword">end</span>
+
+        <span class="keyword">if</span> prior ~= 1
+            <span class="keyword">for</span> index = 1:5
+                fprintf(<span class="string">'RRMSE at %.1falpha*, %.1fgamma* = %f\n'</span>, mult(index, 1), mult(index, 2), rrmseValues(prior, index));
+            <span class="keyword">end</span>
+        <span class="keyword">else</span>
+            <span class="keyword">for</span> index = 1:3
+                fprintf(<span class="string">'RRMSE at %.1falpha*= %f\n'</span>, mult(index, 1), rrmseValues(prior, index));
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">For quadratic prior, alpha* = 0.2
+RRMSE at 1.0alpha*= 0.211118
+RRMSE at 1.2alpha*= 0.212511
+RRMSE at 0.8alpha*= 0.211194
+For Discontinuity-adaptive Huber function, alpha* = 0.60, gamma*= 0.15
+RRMSE at 1.0alpha*, 1.0gamma* = 0.146055
+RRMSE at 1.2alpha*, 1.0gamma* = 0.148535
+RRMSE at 0.8alpha*, 1.0gamma* = 0.146313
+RRMSE at 1.0alpha*, 1.2gamma* = 0.146313
+RRMSE at 1.0alpha*, 0.8gamma* = 0.146313
+For Discontinuity-adaptive function, alpha* = 0.83, gamma*= 0.04
+RRMSE at 1.0alpha*, 1.0gamma* = 0.147636
+RRMSE at 1.2alpha*, 1.0gamma* = 0.221549
+RRMSE at 0.8alpha*, 1.0gamma* = 0.148660
+RRMSE at 1.0alpha*, 1.2gamma* = 0.148660
+RRMSE at 1.0alpha*, 0.8gamma* = 0.148660
+</pre><h2>part C<a name="3"></a></h2><pre class="codeinput">figure; imshow(imageNoiseless); title (<span class="string">'NoiseLess Image'</span>);
+figure; imshow(abs(imageNoisy));     title (<span class="string">'Noisy Image'</span>);
+X(:,:) = denoisedImages(1,:,:); title (<span class="string">'Quadratic Function Image'</span>);
+figure; imshow(abs(X));
+X(:,:) = denoisedImages(2,:,:); title (<span class="string">'Huber function Image'</span>);
+figure; imshow(abs(X));
+X(:,:) = denoisedImages(3,:,:); title (<span class="string">'Discontinuous Adaptive Image'</span>);
+figure; imshow(abs(X));
+</pre><img vspace="5" hspace="5" src="Output_Images/main_01.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_02.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_03.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_04.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_05.png" alt=""> <h2>part D<a name="4"></a></h2><pre class="codeinput"><span class="keyword">for</span> prior = 1:3
+    figure;
+    plot(fxValues(prior, 1:iterValues(prior)));
+    <span class="keyword">if</span> prior == 1
+        title(<span class="string">'Quadratic Prior'</span>);
+    <span class="keyword">elseif</span> prior == 2
+        title(<span class="string">'Discontinuous Adaptive Huber Prior'</span>);
+    <span class="keyword">else</span>
+        title(<span class="string">'Discontinuous Adaptive Prior'</span>);
+    <span class="keyword">end</span>
+    xlabel(<span class="string">'Iteration number'</span>);
+    ylabel(<span class="string">'Objective function'</span>);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="Output_Images/main_06.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_07.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_08.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% CS 736
+%% Part A
+
+% Loading the images
+load('../Data/assignmentImageDenoisingPhantom.mat');
+
+%imageNoiseless  = imageNoiseless(100:150, 100:150);
+%imageNoisy = imageNoisy(100:150, 100:150);
+
+% parameters
+alpha = 0.08;
+gamma = 0.01;
+epsilonThreshold = 0.01;
+epsilon = 0.000001;
+gradThreshold = 0.0001;
+
+% minVal = Inf;
+% minAlpha = 0;
+% minGamma = 0;
+
+fxValues = zeros(3, 100, 1);
+iterValues = zeros(3, 1);
+denoisedImages = zeros(3, size(imageNoisy, 1), size(imageNoisy, 2));
+mult = [1,1; 1.2,1; 0.8, 1; 1,1.2; 1,0.8];
+rrmseValues = zeros(3, 5, 1);
+
+for prior = 1:3
+   
+   % selecting the optimal parameters
+   if prior == 1
+       alpha = 0.20;
+       gamma = 0;      % not relevant
+   elseif prior == 2
+       alpha = 0.60;
+       gamma = 0.15;
+   else
+       alpha = 0.83;
+       gamma = 0.04;
+   end
+   
+%   for alpha = linspace(0.58,0.63,6)
+%       for gamma = linspace(0.14, 0.19, 6)
+%           prior = 2;
+
+    % find the derivative w.r.t prior and the penalty w.r.t potential
+    if prior == 1
+        % quadratic prior
+        h = @(x) quadFunctionH(x);
+        g = @(x) quadFunctionG(x);
+
+    elseif prior == 2
+        % discontinuous adaptive huber prior
+        h = @(x) huberFunctionH(x, gamma);
+        g = @(x) huberFunctionG(x, gamma);
+
+    else
+        % discontinuoue adaptive proir
+        h = @(x) discontAdapFunctionH(x, gamma);
+        g = @(x) discontAdapFunctionG(x, gamma);
+    end
+    
+    for index = 1:5
+
+            alpha = alpha * mult(index, 1);
+            gamma = gamma * mult(index, 2);
+
+            % Gradient Descent to optimize the values
+            X = imageNoisy;           % initial guess
+            prevX = imageNoisy;       % holds previous solution
+            
+            tau = 0.1;
+            prevFx = alpha * priorPotential(X, imageNoisy, g);
+            iteration = 1;  
+            if index == 1
+                fxValues(prior, iteration) = prevFx;
+            end
+            
+            while tau > epsilon && iteration < 50
+                % main loop 
+
+                % calculating the likelihood part of X
+                likelihoodX = prevX - imageNoisy;
+
+                priorDerivative = priorGradient(X, imageNoisy, h);
+
+                dX = (1-alpha) * 2 * likelihoodX + alpha * priorDerivative;
+
+                if sum(sum(abs(dX))) < gradThreshold
+                    break
+                end
+
+                X = prevX - tau * dX;
+                priorV = priorPotential(X, imageNoisy, g);
+                likelihoodX = X - imageNoisy;
+                fx = alpha * priorV + (1-alpha) * sum(sum(abs(likelihoodX).^2));
+
+                % selecting required value of tau
+                while  fx > prevFx && tau > epsilon
+                    X = prevX - tau * dX;
+                    priorV = priorPotential(X, imageNoisy, g);
+                    likelihoodX = X - imageNoisy;
+                    fx = alpha * priorV + (1-alpha) * sum(sum(abs(likelihoodX).^2));
+                    tau = tau * 0.5;
+                end
+
+                if fx <= prevFx
+                    prevX = X;
+                    prevFx = fx;
+                    iteration = iteration + 1;
+                    if index == 1
+                        fxValues(prior, iteration) = fx;
+                    end
+                    tau = tau * 1.1;
+                end 
+
+            end
+
+            X = prevX;
+            if index == 1
+                iterValues(prior) = iteration;
+                denoisedImages(prior,:,:) = X;
+            end
+            rrmseValues(prior, index) = RRMSE(imageNoiseless, X);
+
+    %         sprintf('%f %f %f\n', RRMSE(imageNoiseless, X), alpha, gamma)
+    %         if RRMSE(imageNoiseless, X) < minVal
+    %             minVal = RRMSE(imageNoiseless, X);
+    %             minAlpha = alpha;
+    %             minGamma = gamma;
+    %         end
+
+        end
+end
+
+    % 
+    % minVal
+    % minAlpha
+    % minGamma
+
+
+    % gradient descent done
+    % show the optimized values
+    % disp(RRMSE(imageNoiseless, X));
+    % imshow(imageNoiseless);
+    % figure; imshow(imageNoisy);
+    % figure; imshow(X);
+
+
+    % part A
+    % The initial RRMSE
+    disp(RRMSE(imageNoiseless, imageNoisy));
+
+%% part B
+
+    for prior = 1:3
+        if prior == 1
+            fprintf('For quadratic prior, alpha* = 0.2\n');
+        elseif prior == 2
+            fprintf('For Discontinuity-adaptive Huber function, alpha* = 0.60, gamma*= 0.15\n');
+        else
+            fprintf('For Discontinuity-adaptive function, alpha* = 0.83, gamma*= 0.04\n');
+        end
+
+        if prior ~= 1
+            for index = 1:5
+                fprintf('RRMSE at %.1falpha*, %.1fgamma* = %f\n', mult(index, 1), mult(index, 2), rrmseValues(prior, index));
+            end
+        else
+            for index = 1:3
+                fprintf('RRMSE at %.1falpha*= %f\n', mult(index, 1), rrmseValues(prior, index));
+            end
+        end
+end
+    
+%% part C
+
+figure; imshow(imageNoiseless); title ('NoiseLess Image');
+figure; imshow(abs(imageNoisy));     title ('Noisy Image');
+X(:,:) = denoisedImages(1,:,:); title ('Quadratic Function Image');
+figure; imshow(abs(X));
+X(:,:) = denoisedImages(2,:,:); title ('Huber function Image');
+figure; imshow(abs(X));
+X(:,:) = denoisedImages(3,:,:); title ('Discontinuous Adaptive Image');
+figure; imshow(abs(X));
+
+%% part D
+for prior = 1:3
+    figure;
+    plot(fxValues(prior, 1:iterValues(prior)));
+    if prior == 1
+        title('Quadratic Prior');
+    elseif prior == 2
+        title('Discontinuous Adaptive Huber Prior');
+    else 
+        title('Discontinuous Adaptive Prior');
+    end
+    xlabel('Iteration number');
+    ylabel('Objective function');
+end
+
+##### SOURCE END #####
+--></body></html>
