@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>CS 736: Assignment 2: Question 1 (Diffusion Tensor Magnetic Resonance Imaging)</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-03-09"><meta name="DC.source" content="main.m"><style type="text/css">
+      --><title>CS 736: Assignment 2: Question 1 (Diffusion Tensor Magnetic Resonance Imaging)</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-03-10"><meta name="DC.source" content="main.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,10 +66,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><center><h1><u>CS 736: Assignment 2: Question 1 (Diffusion Tensor Magnetic Resonance Imaging)</u><br><br>
-  Praveen Agrawal 12D020030<br>
-  Aditya Kumar Akash 120050046</h1></center>
-  <!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Part a</a></li><li><a href="#2">Part b</a></li><li><a href="#3">Part c</a></li></ul></div><h2>Part a<a name="1"></a></h2><pre class="codeinput">g = [1,0; 0.866,0.5; 0.5, 0.866; 0,1; -0.5,0.866; -0.866,0.5];
+  </style></head><body><div class="content"><center><h1>CS 736: Assignment 2: Question 1 (Diffusion Tensor Magnetic Resonance Imaging)<br><br>
+  Praveen Agrawal 12D020030 <br>
+  Aditya Kumar Akash 120050046</h1></center><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Part a</a></li><li><a href="#2">Part b</a></li><li><a href="#3">Part c</a></li></ul></div><h2>Part a<a name="1"></a></h2><pre class="codeinput">g = [1,0; 0.866,0.5; 0.5, 0.866; 0,1; -0.5,0.866; -0.866,0.5];
 S = [0.5045-0.0217i; 0.6874+0.0171i; 0.3632+0.1789i; 0.3483+0.1385i; 0.2606-0.0675i; 0.2407 + 0.1517i];
 S0 = 1;
 b0 = 0.1;
@@ -150,56 +149,44 @@ disp(<span class="string">'Clearly as D is a symmetric matrix we can see that th
    -6.0979   17.2112
 
 Clearly as D is a symmetric matrix we can see that the plots of D(1,2) and D(2,1) are identical
-</pre><img vspace="5" hspace="5" src="Output_Images/main_01.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_02.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_03.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_04.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_05.png" alt=""> <h2>Part b<a name="2"></a></h2><pre class="codeinput">a = 1; b = 1;
-gOld = [a;b]; <span class="comment">% Direction Initialization</span>
-gradient = [0;0]; <span class="comment">%Initialization of gradient vector</span>
-lambda = 0.1; <span class="comment">%Step size</span>
-<span class="keyword">while</span>(lambda~= 0)
-    gOld = [a;b];
-	gradient(1) = -(S0*exp(-b0*gOld'*D*gOld))*(2*D(1,1)*a + 2*D(1,2)*b);
-	gradient(2) = -(S0*exp(-b0*gOld'*D*gOld))*(2*D(1,2)*a + 2*D(2,2)*b);
-	SOld = S0*exp(-b0*gOld'*D*gOld);
-    gNew = gOld + lambda * gradient;  <span class="comment">% Gradient Descent</span>
-    gNew = gNew/norm(gNew);
-    a = gNew(1);
-    b = gNew(2);
-	SNew = S0*exp(-b0*gNew'*D*gNew);
-    <span class="keyword">if</span>(SNew&gt;SOld) <span class="comment">%Improved solution</span>
-        lambda = lambda*1.1; <span class="comment">% Increase step size by 10%</span>
-    <span class="keyword">else</span>
-        lambda = 0.5*lambda; <span class="comment">% Decrease step size by 50%</span>
-    <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="Output_Images/main_01.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_02.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_03.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_04.png" alt=""> <img vspace="5" hspace="5" src="Output_Images/main_05.png" alt=""> <h2>Part b<a name="2"></a></h2><pre class="codeinput">[eigenVector, eigenValue] = eig(D);
+<span class="keyword">if</span>(eigenValue(1,1)&gt;eigenValue(2,2))
+    gPrincipal = eigenVector(:,1);
+    diffusionMax = eigenValue(1,1);
+    gOrtho = eigenVector(:,2);
+    diffusionOrtho = eigenValue(2,2);
+<span class="keyword">else</span>
+    gPrincipal = eigenVector(:,2);
+    diffusionMax = eigenValue(2,2);
+    gOrtho = eigenVector(:,1);
+    diffusionOrtho = eigenValue(1,1);
 <span class="keyword">end</span>
-</pre><h2>Part c<a name="3"></a></h2><pre class="codeinput">disp(<span class="string">'Principal direction is'</span>)
-disp(gNew);
+disp(<span class="string">'Principal direction is'</span>)
+disp(gPrincipal);
 disp(<span class="string">'Diffusion in the principal direction is'</span>)
-Smax = S0*exp(-b0*gNew'*D*gNew);
-disp(Smax);
-gOrtho = [-gNew(2); gNew(1)];
-
-disp(<span class="string">'Vector orthogonal to the principal vector'</span>)
-disp(gOrtho);
-Sortho = S0*exp(-b0*gOrtho'*D*gOrtho);
-disp(<span class="string">'Diffusion in the orthogonal direction is'</span>);
-disp(Sortho);
-disp(<span class="string">'Factor by which diffusion in the principal direction is more as compared to the diffusion in the direction orthogonal to it is'</span>);
-disp(Smax/Sortho);
+disp(diffusionMax);
 </pre><pre class="codeoutput">Principal direction is
-    0.9179
-    0.3967
-
-Diffusion in the principal direction is
-    0.7333
-
-Vector orthogonal to the principal vector
    -0.3967
     0.9179
 
+Diffusion in the principal direction is
+   19.8468
+
+</pre><h2>Part c<a name="3"></a></h2><pre class="codeinput">disp(<span class="string">'Vector orthogonal to the principal vector'</span>)
+disp(gOrtho);
+disp(<span class="string">'Diffusion in the orthogonal direction is'</span>);
+disp(diffusionOrtho);
+disp(<span class="string">'Factor by which diffusion in the principal direction is more as compared to the diffusion in the direction orthogonal to it is'</span>);
+disp(diffusionMax/diffusionOrtho);
+</pre><pre class="codeoutput">Vector orthogonal to the principal vector
+   -0.9179
+   -0.3967
+
 Diffusion in the orthogonal direction is
-    0.1374
+    3.1026
 
 Factor by which diffusion in the principal direction is more as compared to the diffusion in the direction orthogonal to it is
-    5.3357
+    6.3968
 
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -284,43 +271,28 @@ disp('Clearly as D is a symmetric matrix we can see that the plots of D(1,2) and
 
 
 %% Part b
-a = 1; b = 1;
-gOld = [a;b]; % Direction Initialization
-gradient = [0;0]; %Initialization of gradient vector
-lambda = 0.1; %Step size
-while(lambda~= 0)
-    gOld = [a;b];
-	gradient(1) = -(S0*exp(-b0*gOld'*D*gOld))*(2*D(1,1)*a + 2*D(1,2)*b);
-	gradient(2) = -(S0*exp(-b0*gOld'*D*gOld))*(2*D(1,2)*a + 2*D(2,2)*b);
-	SOld = S0*exp(-b0*gOld'*D*gOld);
-    gNew = gOld + lambda * gradient;  % Gradient Descent
-    gNew = gNew/norm(gNew);
-    a = gNew(1);
-    b = gNew(2);
-	SNew = S0*exp(-b0*gNew'*D*gNew);
-    if(SNew>SOld) %Improved solution
-        lambda = lambda*1.1; % Increase step size by 10%
-    else
-        lambda = 0.5*lambda; % Decrease step size by 50%
-    end
+[eigenVector, eigenValue] = eig(D);
+if(eigenValue(1,1)>eigenValue(2,2))
+    gPrincipal = eigenVector(:,1);
+    diffusionMax = eigenValue(1,1);
+    gOrtho = eigenVector(:,2);
+    diffusionOrtho = eigenValue(2,2);
+else
+    gPrincipal = eigenVector(:,2);
+    diffusionMax = eigenValue(2,2);
+    gOrtho = eigenVector(:,1);
+    diffusionOrtho = eigenValue(1,1);
 end
-%% Part c
 disp('Principal direction is')
-disp(gNew);
+disp(gPrincipal);
 disp('Diffusion in the principal direction is')
-Smax = S0*exp(-b0*gNew'*D*gNew);
-disp(Smax);
-gOrtho = [-gNew(2); gNew(1)];
-
+disp(diffusionMax);
+%% Part c
 disp('Vector orthogonal to the principal vector')
 disp(gOrtho);
-Sortho = S0*exp(-b0*gOrtho'*D*gOrtho);
 disp('Diffusion in the orthogonal direction is');
-disp(Sortho);
+disp(diffusionOrtho);
 disp('Factor by which diffusion in the principal direction is more as compared to the diffusion in the direction orthogonal to it is');
-disp(Smax/Sortho);
-
-
-
+disp(diffusionMax/diffusionOrtho);
 ##### SOURCE END #####
 --></body></html>

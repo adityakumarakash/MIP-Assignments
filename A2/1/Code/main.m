@@ -79,40 +79,26 @@ disp('Clearly as D is a symmetric matrix we can see that the plots of D(1,2) and
 
 
 %% Part b
-a = 1; b = 1;
-gOld = [a;b]; % Direction Initialization
-gradient = [0;0]; %Initialization of gradient vector
-lambda = 0.1; %Step size
-while(lambda~= 0)
-    gOld = [a;b];
-	gradient(1) = -(S0*exp(-b0*gOld'*D*gOld))*(2*D(1,1)*a + 2*D(1,2)*b);
-	gradient(2) = -(S0*exp(-b0*gOld'*D*gOld))*(2*D(1,2)*a + 2*D(2,2)*b);
-	SOld = S0*exp(-b0*gOld'*D*gOld);
-    gNew = gOld + lambda * gradient;  % Gradient Descent
-    gNew = gNew/norm(gNew);
-    a = gNew(1);
-    b = gNew(2);
-	SNew = S0*exp(-b0*gNew'*D*gNew);
-    if(SNew>SOld) %Improved solution
-        lambda = lambda*1.1; % Increase step size by 10%
-    else
-        lambda = 0.5*lambda; % Decrease step size by 50%
-    end
+[eigenVector, eigenValue] = eig(D);
+if(eigenValue(1,1)>eigenValue(2,2))
+    gPrincipal = eigenVector(:,1);
+    diffusionMax = eigenValue(1,1);
+    gOrtho = eigenVector(:,2);
+    diffusionOrtho = eigenValue(2,2);
+else
+    gPrincipal = eigenVector(:,2);
+    diffusionMax = eigenValue(2,2);
+    gOrtho = eigenVector(:,1);
+    diffusionOrtho = eigenValue(1,1);
 end
-%% Part c
 disp('Principal direction is')
-disp(gNew);
+disp(gPrincipal);
 disp('Diffusion in the principal direction is')
-Smax = S0*exp(-b0*gNew'*D*gNew);
-disp(Smax);
-gOrtho = [-gNew(2); gNew(1)];
-
+disp(diffusionMax);
+%% Part c
 disp('Vector orthogonal to the principal vector')
 disp(gOrtho);
-Sortho = S0*exp(-b0*gOrtho'*D*gOrtho);
 disp('Diffusion in the orthogonal direction is');
-disp(Sortho);
+disp(diffusionOrtho);
 disp('Factor by which diffusion in the principal direction is more as compared to the diffusion in the direction orthogonal to it is');
-disp(Smax/Sortho);
-
-
+disp(diffusionMax/diffusionOrtho);
