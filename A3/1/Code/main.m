@@ -25,22 +25,22 @@ denoisedImages = zeros(3, size(imageNoisy, 1), size(imageNoisy, 2));
 mult = [1,1; 1.2,1; 0.8, 1; 1,1.2; 1,0.8];
 rrmseValues = zeros(3, 5, 1);
 
-for prior = 1:1
+for prior = 3:3
    prior
    % selecting the optimal parameters
    if prior == 1
-       alpha = 0.20;
+       alpha = 0.99979;
        gamma = 0;      % not relevant
    elseif prior == 2
-       alpha = 0.60;
-       gamma = 0.15;
+       alpha = 0.99981;
+       gamma = 0.07;
    else
-       alpha = 0.83;
+       alpha = 0.999999;
        gamma = 0.04;
    end
    
-  for alpha = linspace(0.999,1.0,11)
- %     for gamma = linspace(0.1, 1.0, 10)
+  for alpha = linspace(0.999998,0.999999,3)
+      for gamma = linspace(0.003, 0.008, 6)
 %           prior = 2;
 
     % find the derivative w.r.t prior and the penalty w.r.t potential
@@ -133,8 +133,8 @@ for prior = 1:1
                 minGamma = gamma;
             end
 
-        end
-  %end
+      end
+    end
 end
 
     % 
