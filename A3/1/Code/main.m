@@ -166,11 +166,11 @@ disp(RRMSE(imageNoiseless, imageNoisy));
 
 for prior = 1:3
     if prior == 1
-        fprintf('For quadratic prior, alpha* = 0.2\n');
+        fprintf('For quadratic prior, alpha* = 0.99979\n');
     elseif prior == 2
-        fprintf('For Discontinuity-adaptive Huber function, alpha* = 0.60, gamma*= 0.15\n');
+        fprintf('For Discontinuity-adaptive Huber function, alpha* = 0.99981, gamma*= 0.07\n');
     else
-        fprintf('For Discontinuity-adaptive function, alpha* = 0.83, gamma*= 0.04\n');
+        fprintf('For Discontinuity-adaptive function, alpha* = 0.99999, gamma*= 0.04\n');
     end
 
     if prior ~= 1
