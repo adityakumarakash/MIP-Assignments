@@ -1,4 +1,4 @@
-%% CS 736
+%% CS 736: Medical Image Processing
 %% Part A
 
 % Loading the images
