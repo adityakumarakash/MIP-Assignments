@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><center><h1>CS 736: Medical Image Processing<br>
+  </style></head><body><div class="content">"><center><h1>CS 736: Medical Image Processing<br>
   Assignment 3: Question 1(Reconstructing a Phantom Magnetic Resonance Image)<br><br>
   Praveen Agrawal 12D020030<br>
   Aditya Kumar Akash 120050046
@@ -234,11 +234,11 @@ disp(RRMSE(imageNoiseless, imageNoisy));
 
 </pre><h2>part B<a name="2"></a></h2><pre class="codeinput"><span class="keyword">for</span> prior = 1:3
     <span class="keyword">if</span> prior == 1
-        fprintf(<span class="string">'For quadratic prior, alpha* = 0.2\n'</span>);
+        fprintf(<span class="string">'For quadratic prior, alpha* = 0.99979\n'</span>);
     <span class="keyword">elseif</span> prior == 2
-        fprintf(<span class="string">'For Discontinuity-adaptive Huber function, alpha* = 0.60, gamma*= 0.15\n'</span>);
+        fprintf(<span class="string">'For Discontinuity-adaptive Huber function, alpha* = 0.99981, gamma*= 0.07\n'</span>);
     <span class="keyword">else</span>
-        fprintf(<span class="string">'For Discontinuity-adaptive function, alpha* = 0.83, gamma*= 0.04\n'</span>);
+        fprintf(<span class="string">'For Discontinuity-adaptive function, alpha* = 0.99999, gamma*= 0.04\n'</span>);
     <span class="keyword">end</span>
 
     <span class="keyword">if</span> prior ~= 1
@@ -251,17 +251,17 @@ disp(RRMSE(imageNoiseless, imageNoisy));
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">For quadratic prior, alpha* = 0.2
+</pre><pre class="codeoutput">For quadratic prior, alpha* = 0.99979
 RRMSE at 1.0alpha*= 0.243739
 RRMSE at 1.2alpha*= 0.600731
 RRMSE at 0.8alpha*= 0.261184
-For Discontinuity-adaptive Huber function, alpha* = 0.60, gamma*= 0.15
+For Discontinuity-adaptive Huber function, alpha* = 0.99981, gamma*= 0.07
 RRMSE at 1.0alpha*, 1.0gamma* = 0.198136
 RRMSE at 1.2alpha*, 1.0gamma* = 0.307467
 RRMSE at 0.8alpha*, 1.0gamma* = 0.261225
 RRMSE at 1.0alpha*, 1.2gamma* = 0.261225
 RRMSE at 1.0alpha*, 0.8gamma* = 0.261225
-For Discontinuity-adaptive function, alpha* = 0.83, gamma*= 0.04
+For Discontinuity-adaptive function, alpha* = 0.99999, gamma*= 0.04
 RRMSE at 1.0alpha*, 1.0gamma* = 0.204194
 RRMSE at 1.2alpha*, 1.0gamma* = 0.380502
 RRMSE at 0.8alpha*, 1.0gamma* = 0.261218
@@ -458,11 +458,11 @@ disp(RRMSE(imageNoiseless, imageNoisy));
 
 for prior = 1:3
     if prior == 1
-        fprintf('For quadratic prior, alpha* = 0.2\n');
+        fprintf('For quadratic prior, alpha* = 0.99979\n');
     elseif prior == 2
-        fprintf('For Discontinuity-adaptive Huber function, alpha* = 0.60, gamma*= 0.15\n');
+        fprintf('For Discontinuity-adaptive Huber function, alpha* = 0.99981, gamma*= 0.07\n');
     else
-        fprintf('For Discontinuity-adaptive function, alpha* = 0.83, gamma*= 0.04\n');
+        fprintf('For Discontinuity-adaptive function, alpha* = 0.99999, gamma*= 0.04\n');
     end
 
     if prior ~= 1
