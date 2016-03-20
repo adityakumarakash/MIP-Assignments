@@ -6,12 +6,13 @@ load('../Data/assignmentImageReconstructionPhantom.mat');
 imageNoisy = ifft2(imageKspaceData);
 Y = imageKspaceData;
 S = imageKspaceMask;
+Y = S.*Y;
 
 % parameters
 alpha = 0.08;
 gamma = 0.01;
 epsilonThreshold = 0.01;
-epsilon = 0.000001;
+epsilon = 0.0000001;
 gradThreshold = 0.00001;
 
 minVal = Inf;
@@ -24,7 +25,7 @@ denoisedImages = zeros(3, size(imageNoisy, 1), size(imageNoisy, 2));
 mult = [1,1; 1.2,1; 0.8, 1; 1,1.2; 1,0.8];
 rrmseValues = zeros(3, 5, 1);
 
-for prior = 3:3
+for prior = 1:1
    prior
    % selecting the optimal parameters
    if prior == 1
@@ -38,8 +39,8 @@ for prior = 3:3
        gamma = 0.04;
    end
    
-  for alpha = linspace(0.01,0.1,10)
-      for gamma = linspace(0.01, 0.1, 10)
+  for alpha = linspace(0.999,1.0,11)
+ %     for gamma = linspace(0.1, 1.0, 10)
 %           prior = 2;
 
     % find the derivative w.r.t prior and the penalty w.r.t potential
@@ -77,15 +78,17 @@ for prior = 3:3
             
             while tau > epsilon && iteration < 50
                 % main loop 
-
+                
                 % calculating the likelihood part of X
                 likelihoodX = Y - S.*fft2(prevX);
-
+                
                 priorDerivative = priorGradient(prevX, imageNoisy, h);
                 likelihoodDerivative = ifft2(S.*fft2(prevX)) - imageNoisy;
+                
                 dX = (1-alpha) * 2 * likelihoodDerivative + alpha * priorDerivative;
 
                 if sum(sum(abs(dX))) < gradThreshold
+                    disp('break in here');
                     break
                 end
 
@@ -131,7 +134,7 @@ for prior = 3:3
             end
 
         end
-  end
+  %end
 end
 
     % 
