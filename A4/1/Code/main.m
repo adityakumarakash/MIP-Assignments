@@ -1,7 +1,7 @@
 %% CS 736: Medical Image Processing
 % Assignment 4 (Image Segmentation)
 % Praveen Agrawal 12D020030
-% Aditya Kumar 12*******
+% Aditya Kumar 120050046
 %%
 load('../Data/assignmentSegmentBrain.mat');
 imgSize = size(imageData);
@@ -12,7 +12,7 @@ q = 4;
 windowSize = 25; % 25 x 25 weight window
 windowRadius = floor(windowSize/2);
 sigma = 2;
-numOfIterations = 20;
+numOfIterations = 7;
 
 u = zeros(imgSize(1), imgSize(2), K);   % Membership
 u(:,:,:) = 1/K;  % Initialisation of membership. Ensuring summation(u_k) = 1
@@ -69,7 +69,7 @@ for iterationCount = 1:1:numOfIterations
     close(h);
     
     % Keeping memberships, and class means fixed, solve for BIAS
-    h = waitbar(0,strcat('Iteration-',num2str(iterationCount),'  Updating Bias. Please wait...'));
+    h = waitbar(0,strcat('Iteration-',num2str(iterationCount),'  Updating Bias. This takes time. Please wait...'));
     for i = 1:1:imgSize(1)
         for j = 1:1:imgSize(2)
             if (imageMask(i,j)== 1)
@@ -117,6 +117,7 @@ for iterationCount = 1:1:numOfIterations
         waitbar(i/imgSize(1));
     end
     close(h);
-    iterationCount
-    J(iterationCount)
+    figure;
+    imshow(u);
+    title(num2str(iterationCount));
 end
