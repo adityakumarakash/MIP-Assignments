@@ -5,7 +5,6 @@
 %%
 load('../Data/assignmentSegmentBrain.mat');
 imgSize = size(imageData);
-numOfPoints = nnz(imageMask);
 
 K = 3;  % Number of classes
 q = 4;
@@ -121,3 +120,17 @@ for iterationCount = 1:1:numOfIterations
     imshow(u);
     title(num2str(iterationCount));
 end
+%%
+% Bias removed image
+biasRemovedImage = zeros(imgSize(1),imgSize(2));
+for k = 1:1:K
+    biasRemovedImage = biasRemovedImage + c(k)*u(:,:,k);
+end
+biasRemovedImage = biasRemovedImage.*imageMask;
+figure;
+imagesc(biasRemovedImage);
+truesize;
+
+% Residual Image
+residualImage = imageData - biasRemovedImage.*b;
+figure; imagesc(residualImage); truesize;
