@@ -1,5 +1,5 @@
 function [ gamma ] = membership( X, Mask, Y, k, mew, var, beta )
-%UNTITLED2 Summary of this function goes here
+% This function finds the membership values of the E step
 %   Detailed explanation goes here
 
 M = zeros(size(X, 1), size(X, 2), k);
@@ -11,9 +11,9 @@ for i = 1 : k
     M(:, :, i) = normpdf(Y, mew(i), sqrt(var(i)));
     Potential = zeros(size(X));
     Potential = Potential + beta * (circshift(X, 1, 1) ~= i) .* circshift(Mask, 1, 1);
-    Potential = Potential + beta * (circshift(X, 1, 1) ~= i) .* circshift(Mask, 1, 1);
-    Potential = Potential + beta * (circshift(X, 1, 1) ~= i) .* circshift(Mask, 1, 1);
-    Potential = Potential + beta * (circshift(X, 1, 1) ~= i) .* circshift(Mask, 1, 1);
+    Potential = Potential + beta * (circshift(X, -1, 1) ~= i) .* circshift(Mask, -1, 1);
+    Potential = Potential + beta * (circshift(X, 1, 2) ~= i) .* circshift(Mask, 1, 2);
+    Potential = Potential + beta * (circshift(X, -1, 2) ~= i) .* circshift(Mask, -1, 2);
     Prior(:, :, i) = exp(-1 * Potential);
     NormPrior = NormPrior + Prior(:, :, i);
 end

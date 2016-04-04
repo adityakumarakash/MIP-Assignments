@@ -1,5 +1,5 @@
 function [ LogJointMAP, Labels ] = MAPEstimate( X , Mask, Y, k, mew, var, beta)
-%UNTITLED2 Summary of this function goes here
+% This function finds the MAP estimate of the image
 %   Detailed explanation goes here
 
 MAP = zeros(size(X));
@@ -11,9 +11,9 @@ for i = 1 : k
     % find the potential sum from the cliques
     Potential = zeros(size(X));
     Potential = Potential + beta * (circshift(X, 1, 1) ~= i) .* circshift(Mask, 1, 1);
-    Potential = Potential + beta * (circshift(X, 1, 1) ~= i) .* circshift(Mask, 1, 1);
-    Potential = Potential + beta * (circshift(X, 1, 1) ~= i) .* circshift(Mask, 1, 1);
-    Potential = Potential + beta * (circshift(X, 1, 1) ~= i) .* circshift(Mask, 1, 1);
+    Potential = Potential + beta * (circshift(X, -1, 1) ~= i) .* circshift(Mask, -1, 1);
+    Potential = Potential + beta * (circshift(X, 1, 2) ~= i) .* circshift(Mask, 1, 2);
+    Potential = Potential + beta * (circshift(X, -1, 2) ~= i) .* circshift(Mask, -1, 2);
     % calculate the prior
     Prior(i, :, :) = exp(-1 * Potential);
     temp(:, :) = Prior(i, :, :);

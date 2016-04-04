@@ -1,5 +1,6 @@
 function [ mew, var ] = MStep( Y, Mask, members, k )
-%UNTITLED3 Summary of this function goes here
+% This function finds the mean and variance estimate for the Maximization
+% step of the EM algorithm
 %   Detailed explanation goes here
 mew = zeros(k, 1);
 var = zeros(k, 1);
