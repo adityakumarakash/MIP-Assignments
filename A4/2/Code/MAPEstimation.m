@@ -15,6 +15,5 @@ while estimate - estimatePrev > epsilon
     iteration = iteration + 1;
 end
 
-
 end
 

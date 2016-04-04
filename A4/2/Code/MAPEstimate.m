@@ -32,6 +32,6 @@ for i = 1 : k
     MAP(Ind) = Posterior(Ind);
     Labels(Ind) = i;
 end
-
+Labels = Labels .* Mask;
 % Joint MAP estimate
 LogJointMAP = sum(sum(log(MAP) .* Mask));

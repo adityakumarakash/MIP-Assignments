@@ -25,7 +25,7 @@ X(logical(Mask)) = maskedLabels;
 % computing the variance from k means
 for i = 1:k
     XPart = maskedImage(maskedLabels == i);
-    var(i) = sqrt(sumsqr(XPart - mew(i))/length(XPart));
+    var(i) = sumsqr(XPart - mew(i))/length(XPart);
 end
 beta = 2;
 
@@ -33,7 +33,7 @@ beta = 2;
 epsilon = 0.00001;
 iteration = 0;
 maxIteration = 200;
-estimateArr = [];
+iterArr = zeros(maxIteration, 3);
 
 % EM algorithm
 while sum(abs(mew - mewPrev)) > epsilon && iteration < maxIteration
@@ -41,8 +41,12 @@ while sum(abs(mew - mewPrev)) > epsilon && iteration < maxIteration
     mewPrev = mew;
     varPrev = var;
     % MAP estimation of the labels
+    [oldEstimate] = MAPValue(X, Mask, Y, k, mew, var, beta);
     [estimate, X] = MAPEstimation(X, Mask, Y, k, mew, var, beta);
-    estimateArr = [estimateArr estimate];
+    iterArr(iteration, 1) = iteration;
+    iterArr(iteration, 2) = oldEstimate;
+    iterArr(iteration, 3) = estimate;
+    
     % E step
     [gamma] = membership(X, Mask, Y, k, mew, var, beta);
     
@@ -52,4 +56,13 @@ end
 
 
 segmentedImage = gamma;
+figure;
 imagesc(segmentedImage);
+segmentedLabel = zeros(size(X, 1), size(X, 2), k);
+
+for i = 1 : k
+    segmentedLabel(:, :, i) = ((X == i) * 255);
+end
+
+figure;
+imagesc(segmentedLabel);
