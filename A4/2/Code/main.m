@@ -10,10 +10,10 @@ Y = imageData;
 Mask = imageMask;
 k = 3;
 maxIteration = 200;
-beta = 2;
+betaOpt = 2;
 
 %% Part (a)
-fprintf('The optimal value of beta is %f\n', beta);
+fprintf('The optimal value of beta is %f\n', betaOpt);
 
 
 %% Segmentation using image clustering
@@ -54,7 +54,7 @@ for i = 1 : 2
     end
     
     if i == 1
-        beta = 2;
+        beta = betaOpt;
         disp('Initial Means - ');
         disp(mew);
         disp('Initial Sigma - ');

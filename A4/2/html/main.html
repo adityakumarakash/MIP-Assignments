@@ -1,0 +1,318 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>CS 736: Medical Image Processing</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-04-05"><meta name="DC.source" content="main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>CS 736: Medical Image Processing</h1><!--introduction--><p>Question 2 Assignment 4 (Image Segmentation) Praveen Agrawal 12D020030 Aditya Kumar 120050046</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Part (a)</a></li><li><a href="#3">Segmentation using image clustering</a></li><li><a href="#4">initialization</a></li><li><a href="#5">Part (b) image initialization using kmeans clustering</a></li><li><a href="#6">Part(c) means and variance is intilialized using kmeans clustering</a></li><li><a href="#8">Part (d) Iteration values for MAP estimate</a></li><li><a href="#9">Part (e) Plots</a></li></ul></div><p>Loading the points</p><pre class="codeinput">load(<span class="string">'../Data/assignmentSegmentBrainGmmEmMrf.mat'</span>);
+Y = imageData;
+Mask = imageMask;
+k = 3;
+maxIteration = 200;
+betaOpt = 2;
+</pre><h2>Part (a)<a name="2"></a></h2><pre class="codeinput">fprintf(<span class="string">'The optimal value of beta is %f\n'</span>, betaOpt);
+</pre><pre class="codeoutput">The optimal value of beta is 2.000000
+</pre><h2>Segmentation using image clustering<a name="3"></a></h2><pre class="codeinput">segmentedImage = zeros(size(Y, 1), size(Y, 2), k, 2);
+segmentedLabel = zeros(size(Y, 1), size(Y, 2), k, 2);
+iterArr = zeros(maxIteration, 3);
+iterationValues = zeros(2, 1);
+<span class="keyword">for</span> i = 1 : 2
+</pre><h2>initialization<a name="4"></a></h2><p>Initialization using kmeans Reason - Kmeans intialization is fast. It provides with k clusters</p><pre class="codeinput">    var = zeros(k,1);
+    varPrev = zeros(k, 1);
+    mew = zeros(k, 1);
+    mewPrev = zeros(k, 1);
+
+    maskedImage = Y(logical(Mask));
+    [maskedLabels, mew] = kmeans(maskedImage, k);   <span class="comment">% K means is fast , good for initialization</span>
+</pre><h2>Part (b) image initialization using kmeans clustering<a name="5"></a></h2><pre class="codeinput">    X = zeros(size(Y));
+    X(logical(Mask)) = maskedLabels;
+    <span class="keyword">if</span> (i == 1)
+        figure;
+        tempImage = zeros(size(X, 1), size(X, 2), k);
+        <span class="keyword">for</span> j = 1 : k
+            tempImage(:, :, j) = ((X == j) * 255);
+        <span class="keyword">end</span>
+        imagesc(tempImage);
+        title(<span class="string">'Initial Estimate of the labels using k means'</span>);
+    <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="main_01.png" alt=""> <h2>Part(c) means and variance is intilialized using kmeans clustering<a name="6"></a></h2><p>computing the variance from k means</p><pre class="codeinput">    <span class="keyword">for</span> j = 1:k
+        XPart = maskedImage(maskedLabels == j);
+        var(j) = sumsqr(XPart - mew(j))/length(XPart);
+    <span class="keyword">end</span>
+
+    <span class="keyword">if</span> i == 1
+        beta = betaOpt;
+        disp(<span class="string">'Initial Means - '</span>);
+        disp(mew);
+        disp(<span class="string">'Initial Sigma - '</span>);
+        disp(sqrt(var));
+    <span class="keyword">else</span>
+        beta = 0;
+    <span class="keyword">end</span>
+
+    epsilon = 0.00001;
+    iteration = 0;
+
+    <span class="comment">% EM algorithm</span>
+    <span class="keyword">while</span> sum(abs(mew - mewPrev)) &gt; epsilon &amp;&amp; iteration &lt; maxIteration
+        iteration = iteration + 1;
+        mewPrev = mew;
+        varPrev = var;
+        <span class="comment">% MAP estimation of the labels</span>
+        [oldEstimate] = MAPValue(X, Mask, Y, k, mew, var, beta);
+        [estimate, X] = MAPEstimation(X, Mask, Y, k, mew, var, beta);
+        <span class="keyword">if</span> i == 1
+            iterArr(iteration, 1) = iteration;
+            iterArr(iteration, 2) = oldEstimate;
+            iterArr(iteration, 3) = estimate;
+        <span class="keyword">end</span>
+
+        <span class="comment">% E step</span>
+        [gamma] = membership(X, Mask, Y, k, mew, var, beta);
+
+        <span class="comment">% M step</span>
+        [mew, var] = MStep(Y, Mask, gamma, k);
+    <span class="keyword">end</span>
+
+    iterationValues(i) = iteration;
+    segmentedImage(:, :, :, i) = gamma;
+    <span class="keyword">for</span> j = 1 : k
+        segmentedLabel(:, :, j, i) = ((X == j) * 255);
+    <span class="keyword">end</span>
+</pre><pre class="codeoutput">Initial Means - 
+    0.6288
+    0.2701
+    0.5054
+
+Initial Sigma - 
+    0.0367
+    0.0775
+    0.0442
+
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>Part (d) Iteration values for MAP estimate<a name="8"></a></h2><pre class="codeinput">fprintf(<span class="string">'Iteration\tBefore ICM\tAfter ICM\n'</span>);
+<span class="keyword">for</span> i = 1 : iterationValues(1)
+    fprintf(<span class="string">'%d\t\t%f\t%f\n'</span>, i, iterArr(i, 2), iterArr(i, 3));
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Iteration	Before ICM	After ICM
+1		25551.894452	32440.728524
+2		31246.981019	32727.151065
+3		31377.389323	32789.811959
+4		31444.591345	32812.868379
+5		31477.616588	32823.787331
+6		31497.392853	32826.728561
+7		31511.395431	32823.031524
+8		31520.165522	32825.642709
+9		31516.297730	32824.920966
+10		31515.611479	32824.895419
+</pre><h2>Part (e) Plots<a name="9"></a></h2><pre class="codeinput">figure;
+imshow(Y .* Mask);
+title(<span class="string">'Corrupted Image'</span>);
+
+figure;
+imagesc(segmentedImage(:, :, :, 1));
+title(<span class="string">'Optimal class memmership image estimates for optimal beta'</span>);
+
+figure;
+imagesc(segmentedLabel(:, :, :, 1));
+title(<span class="string">'Optimal label image estimates for optimal beta'</span>);
+
+figure;
+imagesc(segmentedImage(:, :, :, 2));
+title(<span class="string">'Optimal class memmership image estimates for beta = 0'</span>);
+
+figure;
+imagesc(segmentedLabel(:, :, :, 2));
+title(<span class="string">'Optimal label image estimates for beta = 0'</span>);
+</pre><img vspace="5" hspace="5" src="main_02.png" alt=""> <img vspace="5" hspace="5" src="main_03.png" alt=""> <img vspace="5" hspace="5" src="main_04.png" alt=""> <img vspace="5" hspace="5" src="main_05.png" alt=""> <img vspace="5" hspace="5" src="main_06.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% CS 736: Medical Image Processing
+% Question 2
+% Assignment 4 (Image Segmentation)
+% Praveen Agrawal 12D020030
+% Aditya Kumar 120050046
+%% 
+% Loading the points
+load('../Data/assignmentSegmentBrainGmmEmMrf.mat');
+Y = imageData;
+Mask = imageMask;
+k = 3;
+maxIteration = 200;
+betaOpt = 2;
+
+%% Part (a)
+fprintf('The optimal value of beta is %f\n', betaOpt);
+
+
+%% Segmentation using image clustering
+segmentedImage = zeros(size(Y, 1), size(Y, 2), k, 2);
+segmentedLabel = zeros(size(Y, 1), size(Y, 2), k, 2);
+iterArr = zeros(maxIteration, 3);
+iterationValues = zeros(2, 1);
+for i = 1 : 2
+    %% initialization 
+    % Initialization using kmeans
+    % Reason - Kmeans intialization is fast. It provides with k clusters
+    var = zeros(k,1);
+    varPrev = zeros(k, 1);
+    mew = zeros(k, 1);
+    mewPrev = zeros(k, 1);
+
+    maskedImage = Y(logical(Mask));
+    [maskedLabels, mew] = kmeans(maskedImage, k);   % K means is fast , good for initialization
+
+    %% Part (b) image initialization using kmeans clustering
+    X = zeros(size(Y));
+    X(logical(Mask)) = maskedLabels;
+    if (i == 1)
+        figure;
+        tempImage = zeros(size(X, 1), size(X, 2), k);
+        for j = 1 : k
+            tempImage(:, :, j) = ((X == j) * 255);
+        end
+        imagesc(tempImage);
+        title('Initial Estimate of the labels using k means');
+    end
+
+    %% Part(c) means and variance is intilialized using kmeans clustering
+    % computing the variance from k means
+    for j = 1:k
+        XPart = maskedImage(maskedLabels == j);
+        var(j) = sumsqr(XPart - mew(j))/length(XPart);
+    end
+    
+    if i == 1
+        beta = betaOpt;
+        disp('Initial Means - ');
+        disp(mew);
+        disp('Initial Sigma - ');
+        disp(sqrt(var));
+    else 
+        beta = 0;
+    end
+        
+    epsilon = 0.00001;
+    iteration = 0;
+    
+    % EM algorithm
+    while sum(abs(mew - mewPrev)) > epsilon && iteration < maxIteration
+        iteration = iteration + 1;
+        mewPrev = mew;
+        varPrev = var;
+        % MAP estimation of the labels
+        [oldEstimate] = MAPValue(X, Mask, Y, k, mew, var, beta);
+        [estimate, X] = MAPEstimation(X, Mask, Y, k, mew, var, beta);
+        if i == 1
+            iterArr(iteration, 1) = iteration;
+            iterArr(iteration, 2) = oldEstimate;
+            iterArr(iteration, 3) = estimate;
+        end
+        
+        % E step
+        [gamma] = membership(X, Mask, Y, k, mew, var, beta);
+
+        % M step
+        [mew, var] = MStep(Y, Mask, gamma, k);
+    end
+
+    iterationValues(i) = iteration;
+    segmentedImage(:, :, :, i) = gamma;
+    for j = 1 : k
+        segmentedLabel(:, :, j, i) = ((X == j) * 255);
+    end
+end
+
+ 
+
+%% Part (d) Iteration values for MAP estimate
+fprintf('Iteration\tBefore ICM\tAfter ICM\n');
+for i = 1 : iterationValues(1)
+    fprintf('%d\t\t%f\t%f\n', i, iterArr(i, 2), iterArr(i, 3));
+end
+
+%% Part (e) Plots
+figure;
+imshow(Y .* Mask);
+title('Corrupted Image');
+
+figure;
+imagesc(segmentedImage(:, :, :, 1));
+title('Optimal class memmership image estimates for optimal beta');
+
+figure;
+imagesc(segmentedLabel(:, :, :, 1));
+title('Optimal label image estimates for optimal beta');
+
+figure;
+imagesc(segmentedImage(:, :, :, 2));
+title('Optimal class memmership image estimates for beta = 0');
+
+figure;
+imagesc(segmentedLabel(:, :, :, 2));
+title('Optimal label image estimates for beta = 0');
+
+
+##### SOURCE END #####
+--></body></html>
