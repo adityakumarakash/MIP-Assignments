@@ -1,0 +1,297 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>CS 736: Medical Image Processing</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-04-20"><meta name="DC.source" content="main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>CS 736: Medical Image Processing</h1><!--introduction--><p>Question 1 Assignment 5 Praveen Agrawal 12D020030 Aditya Kumar 120050046</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Loading Data</a></li><li><a href="#2">Transforming to preShape</a></li><li><a href="#3">Iterative calculation of mean shape</a></li><li><a href="#4">calculation of modes of variation</a></li><li><a href="#5">PLOTS</a></li><li><a href="#6">Part(a) Intial point set</a></li><li><a href="#7">Part(b) Aligned point sets with mean</a></li><li><a href="#8">Part(c) Principal modes</a></li><li><a href="#9">Part(d) Plot modes of variations</a></li></ul></div><h2>Loading Data<a name="1"></a></h2><pre class="codeinput">load(<span class="string">'../Data/assignmentShapeAnalysis.mat'</span>);
+</pre><h2>Transforming to preShape<a name="2"></a></h2><pre class="codeinput">centroid = sum(pointSets,2) / numOfPoints;
+preShapePoints = pointSets - centroid(:, ones(1, 32), :);
+norms = sqrt(sum(sum(preShapePoints.^2, 2), 1));
+preShapePoints = preShapePoints./norms(ones(1, 2), ones(1, 32), :);
+</pre><h2>Iterative calculation of mean shape<a name="3"></a></h2><p>initialization using sample mean</p><pre class="codeinput">mean = preShapePoints(:, :, 3);
+oldMean = mean + 100;
+
+<span class="comment">% parameters for loop</span>
+epsilon = 0.000001;
+iteration = 0;
+
+<span class="comment">% loop</span>
+<span class="keyword">while</span> sqrt(sumsqr(mean - oldMean)) &gt; epsilon
+    <span class="comment">% update in the loop</span>
+    oldMean = mean;
+    iteration = iteration + 1;
+
+    <span class="comment">% for each set find the rotation matrix</span>
+    <span class="keyword">for</span> i = 1 : numOfPointSets
+        <span class="comment">% find rotation</span>
+        Y = preShapePoints(:, :, i);
+        [U, ~, V] = svd(Y * mean');
+        RotMatrix = V * U';
+        <span class="keyword">if</span> det(RotMatrix) == -1
+            <span class="comment">% correcting for negation</span>
+            t = [1, 0; 0, -1];
+            RotMatrix = V * t * U';
+        <span class="keyword">end</span>
+        preShapePoints(:, :, i) = RotMatrix * preShapePoints(:, :, i);
+    <span class="keyword">end</span>
+
+    <span class="comment">% mean shape calculation</span>
+    mean = sum(preShapePoints, 3) / numOfPointSets;
+
+    <span class="comment">% normalization of mean</span>
+    norm = sqrt(sumsqr(mean));
+    mean = mean ./ norm;
+<span class="keyword">end</span>
+
+<span class="comment">% calculation of eigen values done here</span>
+CV = 0;
+<span class="keyword">for</span> i = 1 : numOfPointSets
+    CV = CV + (preShapePoints(:,:,i) - mean) * (preShapePoints(:,:,i) - mean)';
+<span class="keyword">end</span>
+<span class="comment">% normalized</span>
+CV = CV / numOfPointSets;
+[V,D] = eig(CV);
+eigenValues = diag(D);
+</pre><h2>calculation of modes of variation<a name="4"></a></h2><pre class="codeinput">var = zeros(size(mean, 1), size(mean, 2), 2, 2);
+<span class="keyword">for</span> j = 1 : 2
+    <span class="keyword">for</span> k = 1 : 2
+        <span class="keyword">for</span> i = 1 : 2
+            sd = sqrt(eigenValues(3 - j));
+            mult = 1;
+            <span class="keyword">if</span> k == 2
+                mult = -1;
+            <span class="keyword">end</span>
+            var(i, :, k, j) = mean(i, :) + mult * 2 * sd * V(:, 3 - j)' * mean;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2>PLOTS<a name="5"></a></h2><p>using color shceme</p><pre class="codeinput">colors = jet(numOfPointSets);
+</pre><h2>Part(a) Intial point set<a name="6"></a></h2><pre class="codeinput">figure;
+hold <span class="string">on</span>;
+title(<span class="string">'Original Point Sets plot'</span>);
+<span class="keyword">for</span> i= 1 : numOfPointSets
+   scatter(pointSets(1,:,i), pointSets(2,:,i), <span class="string">'MarkerFaceColor'</span>, colors(i, :));
+<span class="keyword">end</span>
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="main_01.png" alt=""> <h2>Part(b) Aligned point sets with mean<a name="7"></a></h2><pre class="codeinput">figure;
+hold <span class="string">on</span>;
+title(<span class="string">'Aligned Point Sets with mean is plotted'</span>);
+<span class="keyword">for</span> i=1:numOfPointSets
+   scatter(preShapePoints(1, :, i),preShapePoints(2, :, i), <span class="string">'MarkerFaceColor'</span>,colors(i, :));
+<span class="keyword">end</span>
+plot(mean(1,:),mean(2,:), <span class="string">'Marker'</span>, <span class="string">'*'</span>);
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="main_02.png" alt=""> <h2>Part(c) Principal modes<a name="8"></a></h2><pre class="codeinput">figure;
+scatter(1 : size(eigenValues, 1), eigenValues, <span class="string">'*'</span>);
+title(<span class="string">'variances along principal modes in ascending'</span>);
+</pre><img vspace="5" hspace="5" src="main_03.png" alt=""> <h2>Part(d) Plot modes of variations<a name="9"></a></h2><p>plot first mode of variation</p><pre class="codeinput">figure;
+title(<span class="string">'First Mode Variation'</span>);
+hold <span class="string">on</span>;
+scatter(mean(1, :),mean(2, :),<span class="string">'*'</span>);
+scatter(var(1, :, 1, 1), var(2, :, 1, 1),<span class="string">'o'</span>);
+scatter(var(1, :, 2, 1), var(2, :, 2, 1),<span class="string">'+'</span>);
+hold <span class="string">off</span>;
+
+<span class="comment">% plot second mode of variation</span>
+figure;
+title(<span class="string">'Second Mode Variation'</span>);
+hold <span class="string">on</span>;
+scatter(mean(1, :),mean(2, :),<span class="string">'*'</span>);
+scatter(var(1, :, 1, 2), var(2, :, 1, 2),<span class="string">'o'</span>);
+scatter(var(1, :, 2, 2), var(2, :, 2, 2),<span class="string">'+'</span>);
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="main_04.png" alt=""> <img vspace="5" hspace="5" src="main_05.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% CS 736: Medical Image Processing
+% Question 1
+% Assignment 5
+% Praveen Agrawal 12D020030
+% Aditya Kumar 120050046
+
+%% Loading Data
+load('../Data/assignmentShapeAnalysis.mat');
+
+%% Transforming to preShape 
+centroid = sum(pointSets,2) / numOfPoints;
+preShapePoints = pointSets - centroid(:, ones(1, 32), :);
+norms = sqrt(sum(sum(preShapePoints.^2, 2), 1));
+preShapePoints = preShapePoints./norms(ones(1, 2), ones(1, 32), :);
+
+
+%% Iterative calculation of mean shape
+% initialization using sample mean
+mean = preShapePoints(:, :, 3);
+oldMean = mean + 100;
+
+% parameters for loop
+epsilon = 0.000001;
+iteration = 0;
+
+% loop
+while sqrt(sumsqr(mean - oldMean)) > epsilon 
+    % update in the loop
+    oldMean = mean;
+    iteration = iteration + 1;
+    
+    % for each set find the rotation matrix
+    for i = 1 : numOfPointSets
+        % find rotation
+        Y = preShapePoints(:, :, i);
+        [U, ~, V] = svd(Y * mean');
+        RotMatrix = V * U';
+        if det(RotMatrix) == -1
+            % correcting for negation
+            t = [1, 0; 0, -1];
+            RotMatrix = V * t * U';
+        end
+        preShapePoints(:, :, i) = RotMatrix * preShapePoints(:, :, i);
+    end
+    
+    % mean shape calculation 
+    mean = sum(preShapePoints, 3) / numOfPointSets;
+    
+    % normalization of mean
+    norm = sqrt(sumsqr(mean));
+    mean = mean ./ norm;
+end
+
+% calculation of eigen values done here
+CV = 0;
+for i = 1 : numOfPointSets
+    CV = CV + (preShapePoints(:,:,i) - mean) * (preShapePoints(:,:,i) - mean)';
+end
+% normalized
+CV = CV / numOfPointSets;
+[V,D] = eig(CV);
+eigenValues = diag(D);
+
+%% calculation of modes of variation
+var = zeros(size(mean, 1), size(mean, 2), 2, 2);
+for j = 1 : 2
+    for k = 1 : 2
+        for i = 1 : 2
+            sd = sqrt(eigenValues(3 - j));
+            mult = 1;
+            if k == 2
+                mult = -1;
+            end
+            var(i, :, k, j) = mean(i, :) + mult * 2 * sd * V(:, 3 - j)' * mean; 
+        end
+    end
+end
+
+%% PLOTS
+% using color shceme
+colors = jet(numOfPointSets);
+
+%% Part(a) Intial point set
+figure;
+hold on;
+title('Original Point Sets plot');
+for i= 1 : numOfPointSets
+   scatter(pointSets(1,:,i), pointSets(2,:,i), 'MarkerFaceColor', colors(i, :)); 
+end
+hold off;
+
+
+%% Part(b) Aligned point sets with mean
+figure;
+hold on;
+title('Aligned Point Sets with mean is plotted');
+for i=1:numOfPointSets
+   scatter(preShapePoints(1, :, i),preShapePoints(2, :, i), 'MarkerFaceColor',colors(i, :)); 
+end
+plot(mean(1,:),mean(2,:), 'Marker', '*');
+hold off;
+
+
+%% Part(c) Principal modes
+figure;
+scatter(1 : size(eigenValues, 1), eigenValues, '*');
+title('variances along principal modes in ascending');
+
+
+%% Part(d) Plot modes of variations
+% plot first mode of variation
+figure;
+title('First Mode Variation');
+hold on;
+scatter(mean(1, :),mean(2, :),'*');
+scatter(var(1, :, 1, 1), var(2, :, 1, 1),'o');
+scatter(var(1, :, 2, 1), var(2, :, 2, 1),'+');
+hold off;
+
+% plot second mode of variation
+figure;
+title('Second Mode Variation');
+hold on;
+scatter(mean(1, :),mean(2, :),'*');
+scatter(var(1, :, 1, 2), var(2, :, 1, 2),'o');
+scatter(var(1, :, 2, 2), var(2, :, 2, 2),'+');
+hold off;
+
+##### SOURCE END #####
+--></body></html>
