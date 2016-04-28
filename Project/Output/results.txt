@@ -1,0 +1,51 @@
+
+MNIST Dataset
+Accurracy with 5 components is 84.680000
+Prostrate Dataset
+Experiments = 100
+For PLS Avg Accurracy with 5 components is 91.204076
+For SVM Avg Accurracy with svm is 89.145947
+DLBCL dataset
+Experiments = 100
+For PLS Avg Accurracy with 3 components is 95.932962
+For SVM Avg Accurracy with svm is 95.610000
+MNIST Dataset
+Accurracy with 3 components is 82.340000
+Prostrate Dataset
+Experiments = 100
+For PLS Avg Accurracy with 5 components is 91.081492
+For SVM Avg Accurracy with svm is 88.893530
+DLBCL dataset
+Experiments = 100
+For PLS Avg Accurracy with 3 components is 96.196989
+For SVM Avg Accurracy with svm is 94.901315
+
+
+----------------------------------------------------------
+
+MNIST Dataset
+Accurracy with 10 components is 85.500000
+Prostrate Dataset
+Experiments = 100
+For PLS Avg Accurracy with 5 components is 90.417633
+For SVM Avg Accurracy with svm is 88.716411
+DLBCL dataset
+Experiments = 100
+For PLS Avg Accurracy with 3 components is 95.125840
+For SVM Avg Accurracy with svm is 94.587265
+
+
+----------------------------------------------------------
+
+MNIST Dataset
+Accurracy with 4 components is 83.950000
+Prostrate Dataset
+Experiments = 100
+For PLS Avg Accurracy with 5 components is 91.331251
+For SVM Avg Accurracy with svm is 88.867260
+DLBCL dataset
+Experiments = 100
+For PLS Avg Accurracy with 3 components is 96.249034
+For SVM Avg Accurracy with svm is 94.615770
+
+
